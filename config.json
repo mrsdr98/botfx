@@ -1,0 +1,9 @@
+{
+    "blocked_users": [],
+    "user_sessions": {},
+    "telegram_api_id": null,
+    "telegram_api_hash": null,
+    "telegram_string_session": null,
+    "target_channel_username": null,
+    "apify_api_token": null
+}
