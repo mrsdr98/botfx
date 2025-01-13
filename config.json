@@ -5,5 +5,6 @@
     "telegram_api_hash": null,
     "telegram_string_session": null,
     "target_channel_username": null,
-    "apify_api_token": null
+    "apify_api_token": null,
+    "batch_size": 10
 }

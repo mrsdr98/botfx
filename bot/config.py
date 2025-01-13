@@ -1,5 +1,6 @@
 # bot/config.py
 #Handles configuration management, loading environment variables, and managing persistent configurations through config.json.
+
 import json
 import os
 from pathlib import Path
@@ -32,8 +33,11 @@ ADMINS: List[int] = []
 if admins_env:
     try:
         ADMINS = [int(uid.strip()) for uid in admins_env.split(",") if uid.strip().isdigit()]
+        if not ADMINS:
+            raise ValueError
     except ValueError:
-        logger.error("ADMINS environment variable contains non-integer values. Using an empty admin list.")
+        logger.error("ADMINS environment variable must contain comma-separated integer values.")
+        raise ValueError("ADMINS environment variable must contain comma-separated integer values.")
 else:
     logger.warning("ADMINS environment variable is not set. Using an empty admin list.")
 
@@ -45,7 +49,8 @@ default_config = {
     "telegram_api_hash": None,
     "telegram_string_session": None,
     "target_channel_username": None,
-    "apify_api_token": None
+    "apify_api_token": None,
+    "batch_size": 10  # Added for configurability
 }
 
 if CONFIG_FILE.exists():
@@ -116,6 +121,7 @@ def set_session(user_id: int, session_data: Dict[str, Any]):
 
 __all__ = ['BOT_TOKEN', 'WEBHOOK_URL', 'USE_WEBHOOK', 'ADMINS', 'config', 'save_config',
            'is_admin', 'get_session', 'set_session']
+
 #Key Features:
 #
 #Environment Variables: Loaded using python-dotenv.
@@ -123,3 +129,20 @@ __all__ = ['BOT_TOKEN', 'WEBHOOK_URL', 'USE_WEBHOOK', 'ADMINS', 'config', 'save_
 #Admin Management: Parses and validates admin user IDs.
 #Session Management: Handles user-specific sessions for conversational states.
 #Important: Sensitive information such as APIFY_API_TOKEN, TELEGRAM_API_ID, TELEGRAM_API_HASH, TELEGRAM_STRING_SESSION, and TARGET_CHANNEL_USERNAME are managed via the bot's interface and stored securely in config.json.
+
+
+
+#**Improvements:**
+#
+#1. **Batch Size Configuration:**
+#   - Added `batch_size` to `config.json` to allow dynamic adjustment of batch processing sizes.
+#
+#2. **Error Handling Enhancements:**
+#   - Implemented more granular exception handling and logging.
+#
+#3. **Security Enhancements:**
+#   - **Sensitive Data:** Kept sensitive configurations (`apify_api_token`, Telegram credentials) within `config.json`. For higher security, consider encrypting these values or managing them via environment variables.
+#
+#4. **Configuration Validation:**
+#   - Ensures all required keys are present in `config.json`.
+#   - For more robust validation, consider integrating `pydantic` or `jsonschema`.
